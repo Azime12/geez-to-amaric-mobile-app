@@ -1,0 +1,66 @@
+{
+  "expo": {
+    "name": "Argon FREE React Native",
+    "slug": "argon-free-react-native",
+    "privacy": "public",
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "version": "1.7.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "description": "Argon React Native, based on Argon Design System. Coded by Creative Tim",
+    "plugins": [
+      [
+        "expo-font",
+        [
+          "expo-camera",
+          {
+            "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+            "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+            "recordAudioAndroid": true
+          }
+        ]
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps._some_id_here_"
+        }
+      ]
+    ],
+    "android": {
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anonymous.argonfreereactnative"
+    },
+    "scheme": "Argon FREE React Native",
+    "extra": {
+      "eas": {
+        "projectId": "2c11fa84-e3a7-4fea-95fa-aec77f121d32"
+      }
+    }
+  }
+}
