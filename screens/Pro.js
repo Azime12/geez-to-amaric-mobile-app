@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import mime from "mime";
 import {
-  Text,
   TouchableOpacity,
   View,
   StyleSheet,
@@ -14,10 +13,16 @@ import { Camera } from "expo-camera";
 import { Icon } from "galio-framework";
 import { useNavigation } from "@react-navigation/native";
 import { ToastAndroid } from 'react-native';
+import { Button, themeColor } from "react-native-rapi-ui";
+import { AuthContext } from "../components/AuthContext";
+import { Text } from "react-native-rapi-ui";
+import LottieView from "lottie-react-native";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
 export default function Pro() {
+  const { user,signOut } = useContext(AuthContext);
+  const [userinfo,setUser]=useState(JSON.parse(user));
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [capturedPhoto, setCapturedPhoto] = useState(null);
@@ -25,8 +30,19 @@ export default function Pro() {
   const cameraRef = useRef(null);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
+  const [processed, setProcessed] = useState(null);
+
 
   useEffect(() => {
+   
+    if(!user){
+      navigation.navigate('App');
+    }
+
+},[user])
+  
+  useEffect(() => {
+    
     requestPermission();
   }, []);
 
@@ -39,8 +55,8 @@ export default function Pro() {
     // Camera permissions are not granted yet
     return (
       <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
+        <Text style={{ textAlign: "center",color:themeColor.info800 ,marginTop:50}} size="h4">
+To Aceess Camera you need give permission!
         </Text>
         <TouchableOpacity style={styles.button} onPress={requestPermission}>
           <Text style={styles.text}>Grant Permission</Text>
@@ -48,6 +64,7 @@ export default function Pro() {
       </View>
     );
   }
+
 
   function toggleCameraType() {
     setType((prevType) =>
@@ -60,7 +77,7 @@ export default function Pro() {
   const takePicture = async () => {
     try {
       if (cameraRef.current) {
-        const { uri } = await cameraRef.current.takePictureAsync();
+        const { uri } = await cameraRef.current.takePictureAsync({quality:0.7});
         setCapturedPhoto(uri);
         setModalVisible(true);
         cameraRef.current.pausePreview();
@@ -78,11 +95,14 @@ export default function Pro() {
     }
   };
 
+
   const savePhoto = async () => {
     setIsLoading(true);
     console.log("Sending photo to server...");
     
     const newImageUri = "file:///" + capturedPhoto.split("file:/").join("");
+    console.log("New image URI:", newImageUri);
+  
     const formData = new FormData();
     formData.append('file', {
       uri: newImageUri,
@@ -91,38 +111,41 @@ export default function Pro() {
     });
   
     try {
-      const response = await fetch('http://10.2.84.160:5000/upload', {
+      const response = await fetch('https://geeztoamharic.onrender.com/api/users/ocr', {
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${userinfo.token}` 
         },
         body: formData,
       });
   
       if (!response.ok) {
+        setIsLoading(false);
         ToastAndroid.show('Failed to send photo to server', ToastAndroid.SHORT);
         throw new Error('Failed to send photo to server');
       }
   
       const responseData = await response.json();
-      console.log("responseDAta",responseData)
-      console.log("responseData.processed_text",responseData.processed_text)
-      console.log("Photo sent successfully");
+      console.log("Response data:", responseData);
       setIsLoading(false);
       closeModal();
-      navigation.navigate('Home', { processed_text: responseData ? responseData.processed_text : null });
+      navigation.navigate('Home', { responseText: responseData.processed_text }); 
+    
     } catch (error) {
       console.error('Error sending photo to server:', error.message);
       ToastAndroid.show(error.message, ToastAndroid.SHORT);
       setIsLoading(false);
     }
-  };
-  
+};
 
+  
+  
   const retakePhoto = () => {
     setCapturedPhoto(null);
     closeModal();
   };
+
 
   return (
     <View style={styles.container}>
@@ -155,7 +178,26 @@ export default function Pro() {
       >
         <View style={styles.modalContainer}>
           {isLoading ? (
-            <ActivityIndicator size="large" color="#0000ff" />
+              <Modal
+              animationType="fade"
+              transparent={true}
+              visible={isLoading}
+              // onRequestClose={() => {
+              //   // Do nothing, or handle the modal close action
+              // }}
+            >
+              <View style={styles.modalBackground}>
+                <View style={styles.activityIndicatorWrapper}>
+                  {/* <ActivityIndicator animating={true} color="blue" size="large" /> */}
+                  <LottieView
+              source={require('../assets/animation/Animation - 1715537606824.json')} // Replace with your Lottie animation
+              autoPlay
+              loop
+              style={{ width: 100, height: 100 }}
+            />
+                </View>
+              </View>
+            </Modal>
           ) : (
             <View style={styles.imageContainer}>
               <Image
@@ -163,18 +205,8 @@ export default function Pro() {
                 style={styles.modalImage}
               />
               <View style={styles.buttonRow}>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={savePhoto}
-                >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.modalButton}
-                  onPress={retakePhoto}
-                >
-                  <Text style={styles.buttonText}>Retake</Text>
-                </TouchableOpacity>
+              <Button text="Save" onPress={savePhoto} style={{paddingHorizontal:30,color:themeColor.info800}} status="info" outline/>
+               <Button text="Retake" onPress={retakePhoto} style={{paddingHorizontal:20,color:themeColor.info800}} status="danger" outline/>
               </View>
             </View>
           )}
@@ -187,6 +219,17 @@ export default function Pro() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    borderRadius: 10,
+    padding: 20,
   },
   cameraContainer: {
     flex: 1,
@@ -208,7 +251,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   text: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: "bold",
   },
   modalContainer: {
@@ -218,6 +261,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   imageContainer: {
+    width:'100%',
+    height:'100%',
+    position:'absolute',
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
@@ -225,8 +271,8 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   modalImage: {
-    width: screenWidth * 0.8,
-    height: screenHeight * 0.6,
+    width: screenWidth * 0.9,
+    height: screenHeight * 0.75,
     marginBottom: 20,
   },
   cancelButton: {

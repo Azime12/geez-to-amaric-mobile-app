@@ -4,7 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import * as Font from "expo-font";
 import { Asset } from "expo-asset";
 import { Block, GalioProvider } from "galio-framework";
-import { NavigationContainer } from "@react-navigation/native";\
+import { NavigationContainer } from "@react-navigation/native";
 import 'expo-dev-client';
 
 
@@ -14,11 +14,11 @@ enableScreens();
 
 import Screens from "./navigation/Screens";
 import { Images, articles, argonTheme } from "./constants";
-
+import { AuthContext, AuthProvider } from "./components/AuthContext";
 // cache app images
 const assetImages = [
   Images.Onboarding,
-  Images.LogoOnboarding,
+  // Images.LogoOnboarding,
   Images.Logo,
   Images.Pro,
   Images.ArgonLogo,
@@ -75,12 +75,17 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <GalioProvider theme={argonTheme}>
-        <Block flex>
-          <Screens />
-        </Block>
-      </GalioProvider>
+    <AuthProvider>
+       <NavigationContainer onReady={onLayoutRootView}>
+        <GalioProvider theme={argonTheme}>
+          <Block flex>
+            <Screens />
+          </Block>
+        </GalioProvider>
     </NavigationContainer>
+      </AuthProvider>
+    
+   
   );
+  
 }

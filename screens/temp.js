@@ -1,62 +1,91 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Dimensions, ScrollView, TextInput } from "react-native";
-import { Block, theme } from "galio-framework";
-import { Card } from "../components";
-import articles from "../constants/articles";
 
-const { width } = Dimensions.get("screen");
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, Button } from "react-native";
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+import { useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Home = ({ route }) => {
-  // Destructure processed_text from route.params with a default value of an empty string
-  const { processed_text = "" } = route.params;
 
-  // State to hold the processed text
-  const [processedText, setProcessedText] = useState("");
+
+// npx expo install @react-native-google-signin/google-signin
+// npx expo install expo-dev-client
+
+export default function App() {
+  const [error, setError] = useState();
+  const [userInfo, setUserInfo] = useState();
+  
+
+  const configureGoogleSignIn = () => {
+    GoogleSignin.configure({
+      androidClientId:
+        "614987848037-hhp4o0f3fn5coeu2cshu3pnltis4shqt.apps.googleusercontent.com",
+    });
+  };
 
   useEffect(() => {
-    // Set the processed text when the component mounts or when route.params changes
-    setProcessedText(processed_text);
-  }, [processed_text]);
+    configureGoogleSignIn();
+  });
+
+  const signIn = async () => {
+    console.log("Pressed sign in");
+  
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      setUserInfo(userInfo);
+      setError();
+  
+      // Store user info locally
+      await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+  
+      // Navigate to the main page
+      navigateToMainPage(); // Implement this function to navigate to the main page
+    } catch (e) {
+      setError(e);
+    }
+  };
+  
+
+  const logout = async () => {
+    setUserInfo(null);
+    GoogleSignin.revokeAccess();
+    GoogleSignin.signOut();
+  
+    // Remove user info from local storage
+    await AsyncStorage.removeItem('userInfo');
+  
+    // Navigate to the login page
+    navigateToLoginPage(); // Implement this function to navigate to the login page
+  };
+  
 
   return (
-    <Block flex center style={styles.home}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.articles}
-      >
-        <Block flex>
-          {/* Render TextInput with processedText as its value */}
-          <TextInput
-            value={processedText}
-            style={styles.textInput}
-            placeholder="Type Geez Text"
-            multiline={true}
-            numberOfLines={10}
-            textAlignVertical="top"
-          />
-          {/* Render Card component passing textFromimage prop */}
-          <Card item={articles[4]} full textFromimage={processedText} />
-        </Block>
-      </ScrollView>
-    </Block>
+    <View style={styles.container}>
+      <Text>{JSON.stringify(error)}</Text>
+      {userInfo && <Text>{JSON.stringify(userInfo.user)}</Text>}
+      {userInfo ? (
+        <Button title="Logout" onPress={logout} />
+      ) : (
+        <GoogleSigninButton
+          size={GoogleSigninButton.Size.Standard}
+          color={GoogleSigninButton.Color.Dark}
+          onPress={signIn}
+        />
+      )}
+      <StatusBar style="auto" />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  home: {
-    width: width,
-  },
-  articles: {
-    width: width - theme.SIZES.BASE * 2,
-    paddingVertical: theme.SIZES.BASE,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: theme.COLORS.WARNING,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10, // Add some margin to separate TextInput and Card
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
-
-export default Home;

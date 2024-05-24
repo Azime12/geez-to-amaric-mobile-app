@@ -1,24 +1,141 @@
-import React from "react";
+import React, { useState,useEffect, useContext } from "react";
 import {
   StyleSheet,
   Dimensions,
   ScrollView,
   Image,
   ImageBackground,
-  Platform
+  Platform,
+  View,
+ Modal,
+ TouchableOpacity,
+ Alert,
+ ActivityIndicator,
+ ToastAndroid
 } from "react-native";
-import { Block, Text, theme } from "galio-framework";
+import { Block, theme, } from "galio-framework";
 
-import { Button } from "../components";
+// import { Button } from "../components";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
+import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../components/AuthContext";
+import { Button,TextInput,Text, themeColor } from "react-native-rapi-ui";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
-class Profile extends React.Component {
-  render() {
+
+
+const validationSchema = Yup.object().shape({
+  password:Yup.string().required('password is required'),
+  newPassword: Yup.string()
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+      "Password must contain at least one lowercase letter, one uppercase letter, one number, one special character, and be at least 6 characters long"
+    )
+    .required("Password is required"),
+    confirmPassword: Yup.string()
+    .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
+    .required('Confirm Password is required')});
+
+function Profile (){
+  const { user,signOut } = useContext(AuthContext);
+  const [userinfo,setUser]=useState(null);
+const navigation=useNavigation();
+  //logout functionalty
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordC, setShowPasswordC] = useState(false);
+  const [shownewPassword,setNewPassword]=useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+   const [changePaaword,setChangePassword]=useState(false);
+
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+  const togglePasswordVisibilityC = () => {
+    setShowPasswordC((prevShowPassword) => !prevShowPassword);
+  };
+  const togglePasswordVisibilityNewPassword = () => {
+    setNewPassword((prevShowPassword) => !prevShowPassword);
+  };
+  
+  const toggleChangePaaword = () => {
+    setChangePassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const checkUserInfo = async () => {
+    try {
+      if (user) {
+        const userInfo = JSON.parse(user);
+        setUser(userInfo); // Accessing 'user' object from the retrieved data
+      } else {
+// signOut();
+        navigation.navigate('Onboarding');
+      }
+    } catch (error) {
+      console.error('Error checking user login:', error);
+    }
+  }
+
+
+  useEffect(() => {
+    checkUserInfo();
+  }, [user]);
+
+
+
+  const formik = useFormik({
+    initialValues: {
+      password: "",
+      confirmPassword: "",
+      newPassword: ""
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        setIsLoading(true);
+        const response = await fetch("https://geeztoamharic.onrender.com/api/users/passwordchange", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${userinfo.token}`
+          },
+          body: JSON.stringify({
+            id: userinfo.user_info.user_id,
+            oldpassword: values.password,
+            newpassword: values.newPassword,
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success === "true") {
+            ToastAndroid.show(data.message, ToastAndroid.SHORT);
+            setChangePassword(true);
+          } else {
+            Alert.alert("Error", "Password change failed. Please try again.");
+          }
+        } else {
+          const errorData = await response.json();
+          Alert.alert("Error", errorData.message);
+        }
+      } catch (error) {
+        console.error("Error changing password:", error);
+        Alert.alert("Error", "An error occurred while changing the password. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
+
+  
     return (
       <Block flex style={styles.profile}>
         <Block flex>
@@ -33,10 +150,15 @@ class Profile extends React.Component {
             >
               <Block flex style={styles.profileCard}>
                 <Block middle style={styles.avatarContainer}>
-                  <Image
-                    source={{ uri: Images.ProfilePicture }}
-                    style={styles.avatar}
-                  />
+                <Image
+  source={
+    userinfo?.pic
+      ? { uri: userinfo?.pic }
+      : require('../assets/profile_12901975.png')
+  }
+  style={styles.avatar}
+/>
+
                 </Block>
                 <Block style={styles.info}>
                   <Block
@@ -45,238 +167,196 @@ class Profile extends React.Component {
                     space="evenly"
                     style={{ marginTop: 20, paddingBottom: 24 }}
                   >
-                    <Button
-                      small
-                      style={{ backgroundColor: argonTheme.COLORS.INFO }}
+                    {/* <Button
+                    size="h2"
+                    text="Favorite"
+                      style={{ backgroundColor: argonTheme.COLORS.INFO ,height:30}}
                     >
-                      CONNECT
+                      
                     </Button>
                     <Button
+                    text="Translation"
                       small
                       style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}
                     >
                       MESSAGE
-                    </Button>
+                    </Button> */}
                   </Block>
                   <Block row space="between">
                     <Block middle>
                       <Text
                         bold
-                        size={18}
+                        size={'h3'}
                         color="#525F7F"
                         style={{ marginBottom: 4 }}
                       >
-                        2K
+                        Email
                       </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Orders</Text>
+                      <Text size={12} color={argonTheme.COLORS.TEXT}>{userinfo?.user_info?.email}</Text>
                     </Block>
-                    <Block middle>
-                      <Text
-                        bold
-                        color="#525F7F"
-                        size={18}
-                        style={{ marginBottom: 4 }}
-                      >
-                        10
-                      </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Photos</Text>
-                    </Block>
-                    <Block middle>
-                      <Text
-                        bold
-                        color="#525F7F"
-                        size={18}
-                        style={{ marginBottom: 4 }}
-                      >
-                        89
-                      </Text>
-                      <Text size={12} color={argonTheme.COLORS.TEXT}>Comments</Text>
-                    </Block>
+               
                   </Block>
+                 
                 </Block>
                 <Block flex>
                   <Block middle style={styles.nameInfo}>
-                    <Text bold size={28} color="#32325D">
-                      Jessica Jones, 27
+                    <Text  size={'h3'} style={{fontWeight:'bold',color:'#32325D'}}>
+                      {userinfo?.user_info?.full_name}
                     </Text>
                     <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                      San Francisco, USA
+                      Addis Abab, Ethiopia
                     </Text>
+                  </Block>
+                  <Block style={{marginTop:20}} >
+                  <Button text="Your Favorite Text" status="warning" outline style={{marginBottom:20}} onPress={()=>{navigation.navigate('Favorite')}}/>
+                  <Button text="Translate Now" status="primary" outline onPress={()=>{navigation.navigate('Home')}}/>
+
+
+                    
                   </Block>
                   <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
                     <Block style={styles.divider} />
                   </Block>
-                  <Block middle>
-                    <Text
-                      size={16}
-                      color="#525F7F"
-                      style={{ textAlign: "center" }}
-                    >
-                      An artist of considerable range, Jessica name taken by
-                      Melbourne …
-                    </Text>
-                    <Button
-                      color="transparent"
-                      textStyle={{
-                        color: "#233DD2",
-                        fontWeight: "500",
-                        fontSize: 16
-                      }}
-                    >
-                      Show more
-                    </Button>
-                  </Block>
+               {
+                changePaaword?(
+                  <>
+                  
                   <Block
-                    row
+                    column
                     space="between"
                   >
-                    <Text bold size={16} color="#525F7F" style={{marginTop: 12}}>
-                      Album
-                    </Text>
-                    <Button
-                      small
-                      color="transparent"
-                      textStyle={{ color: "#5E72E4", fontSize: 12, marginLeft: 24 }}
-                    >
-                      View all
-                    </Button>
+                   
+                    <Text size={'h3'} style={{marginBottom:20}}>Change password</Text>
+                    <Text style={{ marginTop: 5,fontSize:13 }}>Password</Text>
+                    <TextInput
+                    containerStyle={{ marginTop: 5,height:42 }}
+                    placeholder="Password"
+                    secureTextEntry={!showPassword}
+                    borderless
+                    onChangeText={formik.handleChange("password")}
+                    onBlur={formik.handleBlur("password")}
+                    value={formik.values.password}
+                    autoCapitalize="none"
+                    autoCompleteType="off"
+                    autoCorrect={false}
+                    
+                    rightContent={
+                      <TouchableOpacity onPress={togglePasswordVisibility}>
+                      <Ionicons name={showPassword?"eye-off":"eye"} size={20} color={'grey'} />
+
+                    </TouchableOpacity>
+                  }
+                  />
+                  {formik.touched.password && formik.errors.password && (
+                    <Text style={{ color: "#9d0208",fontSize:12,fontWeight:'100' }}>{formik.errors.password}</Text>
+                  ) }
+           {/* new password */}
+                    <Text style={{ marginTop: 5,fontSize:13 }}>New Password</Text>
+                    <TextInput
+                    containerStyle={{ marginTop: 5,height:42 }}
+                    placeholder="new password here"
+                    secureTextEntry={!shownewPassword}
+                    borderless
+                    onChangeText={formik.handleChange("newPassword")}
+                    onBlur={formik.handleBlur("newPassword")}
+                    value={formik.values.newPassword}
+                    autoCapitalize="none"
+                    autoCompleteType="off"
+                    autoCorrect={false}
+                    
+                    rightContent={
+                      <TouchableOpacity onPress={togglePasswordVisibilityNewPassword}>
+                      <Ionicons name={shownewPassword?"eye-off":"eye"} size={20} color={'grey'} />
+
+                    </TouchableOpacity>
+                  }
+                  />
+                  {formik.touched.newPassword && formik.errors.newPassword && (
+                    <Text style={{ color: "#9d0208",fontSize:12,fontWeight:'100' }}>{formik.errors.newPassword}</Text>
+                  ) }
+
+              <Text style={{ marginTop: 5,fontSize:13 }}>Re-Password</Text>
+              <TextInput
+              containerStyle={{ marginTop: 5,height:42}}
+              placeholder="Re-enter new password"
+              secureTextEntry={!showPasswordC}
+              rightContent={
+                <TouchableOpacity onPress={togglePasswordVisibilityC}>
+                <Ionicons name={showPasswordC?"eye-off":"eye"} size={20} color={'grey'} />
+
+                </TouchableOpacity>
+            }
+              borderless
+                      onChangeText={formik.handleChange("confirmPassword")}
+                      onBlur={formik.handleBlur("confirmPassword")}
+                      value={formik.values.confirmPassword}
+                      autoCapitalize="none"
+                      autoCompleteType="off"
+                      autoCorrect={false}
+                    />
+                    {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                      <Text style={{ color: "#9d0208",fontSize:12,fontWeight:'100' }}>{formik.errors.confirmPassword}</Text>
+                    ) }
+         <Block style={{marginVertical:20}}>
+         <Button
+         text={isLoading?<ActivityIndicator/>:"Change"}
+         onPress={formik.handleSubmit}
+         disabled={isLoading}
+         />
+         </Block>
                   </Block>
-                  <Block style={{ paddingBottom: -HeaderHeight * 2 }}>
-                    <Block row space="between" style={{ flexWrap: "wrap" }}>
-                      {Images.Viewed.map((img, imgIndex) => (
-                        <Image
-                          source={{ uri: img }}
-                          key={`viewed-${img}`}
-                          resizeMode="cover"
-                          style={styles.thumb}
-                        />
-                      ))}
-                    </Block>
+                
+                  </>
+                ):(
+                  <Block  style={{justifyContent:'center',}}>
+               <Button text="Change password" status="primary" onPress={toggleChangePaaword}/> 
+               {/* <Button text="Logout" status="danger"/>  */}
+
                   </Block>
+                )
+                
+               }
                 </Block>
+               
               </Block>
             </ScrollView>
           </ImageBackground>
         </Block>
-        {/* <ScrollView showsVerticalScrollIndicator={false} 
-                    contentContainerStyle={{ flex: 1, width, height, zIndex: 9000, backgroundColor: 'red' }}>
-        <Block flex style={styles.profileCard}>
-          <Block middle style={styles.avatarContainer}>
-            <Image
-              source={{ uri: Images.ProfilePicture }}
-              style={styles.avatar}
-            />
-          </Block>
-          <Block style={styles.info}>
-            <Block
-              middle
-              row
-              space="evenly"
-              style={{ marginTop: 20, paddingBottom: 24 }}
-            >
-              <Button small style={{ backgroundColor: argonTheme.COLORS.INFO }}>
-                CONNECT
-              </Button>
-              <Button
-                small
-                style={{ backgroundColor: argonTheme.COLORS.DEFAULT }}
-              >
-                MESSAGE
-              </Button>
-            </Block>
+      
 
-            <Block row space="between">
-              <Block middle>
-                <Text
-                  bold
-                  size={12}
-                  color="#525F7F"
-                  style={{ marginBottom: 4 }}
-                >
-                  2K
-                </Text>
-                <Text size={12}>Orders</Text>
-              </Block>
-              <Block middle>
-                <Text bold size={12} style={{ marginBottom: 4 }}>
-                  10
-                </Text>
-                <Text size={12}>Photos</Text>
-              </Block>
-              <Block middle>
-                <Text bold size={12} style={{ marginBottom: 4 }}>
-                  89
-                </Text>
-                <Text size={12}>Comments</Text>
-              </Block>
-            </Block>
-          </Block>
-          <Block flex>
-              <Block middle style={styles.nameInfo}>
-                <Text bold size={28} color="#32325D">
-                  Jessica Jones, 27
-                </Text>
-                <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                  San Francisco, USA
-                </Text>
-              </Block>
-              <Block middle style={{ marginTop: 30, marginBottom: 16 }}>
-                <Block style={styles.divider} />
-              </Block>
-              <Block middle>
-                <Text size={16} color="#525F7F" style={{ textAlign: "center" }}>
-                  An artist of considerable range, Jessica name taken by
-                  Melbourne …
-                </Text>
-                <Button
-                  color="transparent"
-                  textStyle={{
-                    color: "#233DD2",
-                    fontWeight: "500",
-                    fontSize: 16
-                  }}
-                >
-                  Show more
-                </Button>
-              </Block>
-              <Block
-                row
-                style={{ paddingVertical: 14, alignItems: "baseline" }}
-              >
-                <Text bold size={16} color="#525F7F">
-                  Album
-                </Text>
-              </Block>
-              <Block
-                row
-                style={{ paddingBottom: 20, justifyContent: "flex-end" }}
-              >
-                <Button
-                  small
-                  color="transparent"
-                  textStyle={{ color: "#5E72E4", fontSize: 12 }}
-                >
-                  View all
-                </Button>
-              </Block>
-              <Block style={{ paddingBottom: -HeaderHeight * 2 }}>
-                <Block row space="between" style={{ flexWrap: "wrap" }}>
-                  {Images.Viewed.map((img, imgIndex) => (
-                    <Image
-                      source={{ uri: img }}
-                      key={`viewed-${img}`}
-                      resizeMode="cover"
-                      style={styles.thumb}
-                    />
-                  ))}
-                </Block>
-              </Block>
-          </Block>
-        </Block>
-                  </ScrollView>*/}
+                  {modalVisible?
+                      (<Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => {
+                          setModalVisible(!modalVisible);
+                        }}
+                      >
+                        <View style={styles.modalContainer}>
+                          <View style={styles.modalContent}>
+                            <Text style={styles.modalText}>Are you sure you want to logout?</Text>
+                            <View style={styles.buttonContainer}>
+                              <Button small  onPress={() => setModalVisible(false)} >
+                              <Text style={{color:'white'}}>Cancel</Text>
+            
+
+                              </Button>
+                              <Button t small style={{backgroundColor:argonTheme.COLORS.ERROR}} onPress={confirmLogout} >
+                                <Text style={{color:'white'}}>Logout</Text>
+                              </Button>
+                            </View>
+                          </View>
+                        </View>
+                      </Modal>
+                      ):('')
+                  }
+                  <Block>
+                  
+                  </Block>
       </Block>
     );
-  }
+  
 }
 
 const styles = StyleSheet.create({
@@ -336,7 +416,35 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: thumbMeasure,
     height: thumbMeasure
-  }
+  },
+  
+  modalContent: {
+    width: width * 0.95, // Adjust the width as needed
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 5,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent black background
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    marginTop: 20, // Adjust as needed
+  },
+  button: {
+    marginHorizontal: 10, 
+    maxWidth: 120, },
+    backgroundColor:argonTheme.COLORS.PRIMARY
 });
 
 export default Profile;

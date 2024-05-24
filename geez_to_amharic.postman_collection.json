@@ -1,0 +1,190 @@
+{
+	"info": {
+		"_postman_id": "28b3b1df-865e-4abd-ad98-d69fc2d763a3",
+		"name": "geez_to_amharic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30112826",
+		"_collection_link": "https://dark-firefly-585243.postman.co/workspace/My-Workspace~42dc1835-c03e-488f-8553-9c73f8b3c90f/collection/30112826-28b3b1df-865e-4abd-ad98-d69fc2d763a3?action=share&source=collection_link&creator=30112826"
+	},
+	"item": [
+		{
+			"name": "admin",
+			"item": []
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n       \"full_name\":\"yyyyyyyy\",\r\n       \"email\":\"yyyy@g@\",\r\n       \"password\":\"a;skdjn\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"yyyy@g@\",\r\n    \"password\":\"a;skdjn\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "favorite",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl5eXlAZ0AiLCJpYXQiOjE3MTMxOTg4MDksImV4cCI6MTcxNTc5MDgwOX0._FzTsM5-YIP7iikVsZiLywvBx32ntygdb49W5Ie0Ys0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"1\",\r\n    \"geez\":\"currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer currently am doing a website to language translation from one language to another language and i want to enable the user to store favorite translation so how to store  this translation the the database the sentences may be longer v\",\r\n    \"amharic\":\"a;skdjn\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/favorite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl5eXlAZ0AiLCJpYXQiOjE3MTMxOTg4MDksImV4cCI6MTcxNTc5MDgwOX0._FzTsM5-YIP7iikVsZiLywvBx32ntygdb49W5Ie0Ys0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/api/users/favorite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiYmhoaEBnQG1haWlsbGxramhsbGwuYXMiLCJpYXQiOjE3MTMxODY5MDYsImV4cCI6MTcxNTc3ODkwNn0.tSEcsPAdQWPZ3M7opfiGDMogrQ3S6f86N3E2-Qw6ICY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":\"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/users/favorite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"users",
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

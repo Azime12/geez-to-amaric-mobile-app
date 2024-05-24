@@ -4,6 +4,7 @@ import { Block, Text, theme } from "galio-framework";
 
 import Icon from "./Icon";
 import argonTheme from "../constants/Theme";
+import { themeColor } from "react-native-rapi-ui";
 
 class DrawerItem extends React.Component {
   renderIcon = () => {
@@ -16,9 +17,18 @@ class DrawerItem extends React.Component {
             name="shop"
             family="ArgonExtra"
             size={14}
-            color={focused ? "white" : argonTheme.COLORS.PRIMARY}
-          />
+            color={focused ? "white" : themeColor.info600}
+            />
         );
+        case "Profile":
+          return (
+            <Icon
+              name="chart-pie-35"
+              family="ArgonExtra"
+              size={14}
+              color={focused ? "white" : argonTheme.COLORS.WARNING}
+            />
+          );
       case "Favorite":
         return (
           <Icon
@@ -28,6 +38,13 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : argonTheme.COLORS.ERROR}
           />
         );
+        case "About Us":
+        return (<Icon
+          name="spaceship"
+          family="ArgonExtra"
+          size={14}
+          color={focused ? "white" : themeColor.primary500}
+        />);
       case "Logout":
         return (
           <Icon
@@ -37,33 +54,19 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : argonTheme.COLORS.PRIMARY}
           />
         );
-      case "Profile":
-        return (
-          <Icon
-            name="chart-pie-35"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? "white" : argonTheme.COLORS.WARNING}
-          />
-        );
-      case "Account":
-        return (
-          <Icon
-            name="calendar-date"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? "white" : argonTheme.COLORS.INFO}
-          />
-        );
-      case "Getting Started":
-        return (<Icon
-          name="spaceship"
-          family="ArgonExtra"
-          size={14}
-          color={focused ? "white" : "rgba(0,0,0,0.5)"}
-        />);
-      case "Log out":
-        return <Icon />;
+   
+      // case "Account":
+      //   return (
+      //     <Icon
+      //       name="calendar-date"
+      //       family="ArgonExtra"
+      //       size={14}
+      //       color={focused ? "white" : argonTheme.COLORS.INFO}
+      //     />
+      //   );
+      
+      // case "Log out":
+      //   return <Icon />;
       default:
         return null;
     }
@@ -96,7 +99,7 @@ class DrawerItem extends React.Component {
             <Text
               size={15}
               bold={focused ? true : false}
-              color={focused ? "white" : "rgba(0,0,0,0.5)"}
+              color={focused ? "white" : "black"}
             >
               {title}
             </Text>
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16
   },
   activeStyle: {
-    backgroundColor: argonTheme.COLORS.ACTIVE,
+    backgroundColor: "#3690ED", // Change this color to your desired color
     borderRadius: 4
   },
   shadow: {
@@ -126,5 +129,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1
   }
 });
+
 
 export default DrawerItem;

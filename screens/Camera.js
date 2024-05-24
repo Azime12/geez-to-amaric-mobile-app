@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Platform, Image } from 'react-native';
 import { Camera } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
-import * as Permissions from 'expo-permissions';
+import * as MediaLibrary from 'expo-media-library'; // Importing media library module
 
 export default function CameraExample() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -36,8 +35,8 @@ export default function CameraExample() {
           console.log('Error saving photo to album:', error);
         });
     } else {
-      const permission = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-      if (permission.status === 'granted') {
+      const { status } = await MediaLibrary.requestPermissionsAsync(); // Request media library permissions
+      if (status === 'granted') {
         MediaLibrary.saveToLibraryAsync(photo.uri)
           .then(() => {
             console.log('Photo saved to gallery');

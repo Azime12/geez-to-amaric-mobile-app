@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Argon FREE React Native",
-    "slug": "argon-free-react-native",
+    "name": "Geez To Amharic",
+    "slug": "geez-to-amharic",
     "privacy": "public",
     "platforms": [
       "ios",
@@ -11,7 +11,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splashImage/d37cc919-bbbf-4b92-ad24-edb68147035d-46.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
@@ -22,9 +22,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.geettoamharicTranslation"
     },
-    "description": "Argon React Native, based on Argon Design System. Coded by Creative Tim",
+    "description": "Geez to Amharic machine translation developed ",
     "plugins": [
       [
         "expo-font",
@@ -54,12 +55,11 @@
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.anonymous.argonfreereactnative"
+      "package": "com.anonymous.geettoamharicTranslation"
     },
-    "scheme": "Argon FREE React Native",
     "extra": {
       "eas": {
-        "projectId": "2c11fa84-e3a7-4fea-95fa-aec77f121d32"
+        "projectId": "15b06924-236e-43c3-ba2b-c6063166c793"
       }
     }
   }
