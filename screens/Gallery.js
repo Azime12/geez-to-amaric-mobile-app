@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Image, StyleSheet, TouchableOpacity, Text, ToastAndroid,Dimensions, Modal,ActivityIndicator} from "react-native";
+import { View, Image, StyleSheet, TouchableOpacity, Text, ToastAndroid,Dimensions, Modal,ActivityIndicator, Alert} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "react-native-rapi-ui";
 import { AuthContext } from "../components/AuthContext";
 import LottieView from "lottie-react-native";
+import { Image as CompressImage } from 'react-native-compressor';
+
 
 
 const screenWidth = Dimensions.get('window').width;
@@ -40,8 +42,9 @@ const UploadImageExample = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      quality: 0.6,
+      quality: 1,
     });
+
   if (!result.cancelled && result.assets.length > 0) {
     const selectedAsset = result.assets[0];
     setSelectedImage(selectedAsset.uri);
@@ -54,10 +57,15 @@ const UploadImageExample = () => {
   const uploadImage = async () => { 
     
     // console.log("tesseract text from image:",tesseracet);
+    const coResult = await CompressImage.compress(selectedImage, {
+      compressionMethod: 'auto',
+    });
+    
+    console.log("compress",coResult);
 
     const formData = new FormData();
     formData.append("file", {
-      uri: selectedImage,
+      uri: coResult,
       name: "image.jpg",
       type: "image/jpeg",
     });
@@ -84,6 +92,12 @@ const UploadImageExample = () => {
     } catch (error) {
       setIsLoading(false);
       console.error("Error sending photo to server:", error.message);
+
+      Alert.alert(
+        "Upload Error",
+        `please try again me be: ${error.message}`,
+        [{ text: "OK" }])
+
       ToastAndroid.show("Failed to upload image. Please try again.", ToastAndroid.SHORT);
     }
   };

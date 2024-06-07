@@ -173,6 +173,8 @@ const Favorite = () => {
           );
           setLoading(false);
         }
+        setLoading(false);
+
       };
 
       fetchData();

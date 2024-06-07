@@ -40,7 +40,7 @@ export default function App() {
   const [amharicText, setAmharicText] = useState("");
   const route = useRoute();
   const geezTexeGallery = route.params;
- const Navigation=useNavigation();
+  const Navigation=useNavigation();
 
   useEffect(() => {
    
@@ -71,8 +71,53 @@ export default function App() {
   };
 
 //Translation of handle
-  const handleTranslation = () => {
+  const handleTranslation = async () => {
     setAmharicText(am);
+    try {
+      const requestBody = {
+        geez: geezText,
+      };
+      const response = await fetch(
+        "https://geeztoamharic.onrender.com/api/users/translate",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+              'Authorization': `Bearer ${userData.token}` 
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success === "True") {
+          ToastAndroid.show("Favorite Added", ToastAndroid.SHORT);
+      
+        } else {
+          // If response is successful but does not contain success and token, handle the error
+          Alert.alert(
+            "Error",
+            "Favorite could not be added.or check your connection Please try again."
+          );
+        }
+      } else {
+        // If response status is not OK, handle the error
+        try {
+          const errorData = await response.json();
+          Alert.alert("Error", errorData.message);
+        } catch (error) {
+          console.error("Error parsing error response:", error);
+          Alert.alert(
+            "Error",
+            "An error occurred while processing the response. Please try again."
+          );
+        }
+      }
+    } catch (error) {
+          Alert.alert("Error", " Please try again.");
+    }
+    
   };
 
   const handleFavorite = async (geezText, amharicText) => {

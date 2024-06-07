@@ -1,24 +1,15 @@
-import { Animated, Dimensions, Easing } from "react-native";
-// header for screens
-import { Header, Icon } from "../components";
-import { argonTheme, tabs } from "../constants";
-
-import Articles from "../screens/Articles";
-import { Block } from "galio-framework";
-// drawer
+import {  Dimensions, Easing } from "react-native";
+import { Header,  } from "../components";
 import CustomDrawerContent from "./Menu";
 import Elements from "../screens/Elements";
-// screens
 import Home from "../screens/Home";
 import Onboarding from "../screens/Onboarding";
 import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
-import React, { useState, useEffect, useContext } from "react";
+import React, {  useContext } from "react";
 import Register from "../screens/Register";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
-import Camera from "../screens/Camera";
 import Gallery from "../screens/Gallery";
 import LogoutComponent from "../screens/Logout";
 const { width } = Dimensions.get("screen");
@@ -29,7 +20,6 @@ import AboutUsScreen from "../screens/Aboutus";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const Tab = createBottomTabNavigator();
 
 
 function ElementsStack(props) {
@@ -52,10 +42,7 @@ function ElementsStack(props) {
               header: ({ navigation, scene }) => (
                 <Header
                   title="Favorite"
-                  // search
-                  // options
-                  // navigation={navigation}
-                  // scene={scene}
+                 
                 />
               ),
               cardStyle: { backgroundColor: "#F8F9FE" },

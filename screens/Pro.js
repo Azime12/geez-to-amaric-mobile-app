@@ -7,7 +7,7 @@ import {
   Image,
   Modal,
   Dimensions,
-  ActivityIndicator,
+  // ActivityIndicator,
 } from "react-native";
 import { Camera } from "expo-camera";
 import { Icon } from "galio-framework";
@@ -17,6 +17,7 @@ import { Button, themeColor } from "react-native-rapi-ui";
 import { AuthContext } from "../components/AuthContext";
 import { Text } from "react-native-rapi-ui";
 import LottieView from "lottie-react-native";
+import {Image as CompressImage} from 'react-native-compressor';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 
@@ -77,7 +78,7 @@ To Aceess Camera you need give permission!
   const takePicture = async () => {
     try {
       if (cameraRef.current) {
-        const { uri } = await cameraRef.current.takePictureAsync({quality:0.7});
+        const { uri } = await cameraRef.current.takePictureAsync({quality:1});
         setCapturedPhoto(uri);
         setModalVisible(true);
         cameraRef.current.pausePreview();
@@ -102,12 +103,18 @@ To Aceess Camera you need give permission!
     
     const newImageUri = "file:///" + capturedPhoto.split("file:/").join("");
     console.log("New image URI:", newImageUri);
-  
+
+    const coResult = await CompressImage.compress(newImageUri, {
+      compressionMethod: 'auto',
+    });
+    
+    console.log("compress",coResult);
+
     const formData = new FormData();
     formData.append('file', {
-      uri: newImageUri,
-      type: mime.getType(newImageUri),
-      name: newImageUri.split("/").pop()
+      uri: coResult,
+      type: mime.getType(coResult),
+      name: coResult.split("/").pop()
     });
   
     try {

@@ -19,10 +19,7 @@
     "@expo/prebuild-config": "~6.7.0",
     "@expo/webpack-config": "^19.0.0",
     "@react-native-async-storage/async-storage": "1.21.0",
-    "@react-native-community/checkbox": "^0.5.17",
     "@react-native-google-signin/google-signin": "^11.0.1",
-    "@react-native-masked-view/masked-view": "0.3.0",
-    "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/compat": "^5.1.25",
     "@react-navigation/drawer": "6.4.1",
     "@react-navigation/native": "^6.0.10",
@@ -30,19 +27,15 @@
     "@rneui/base": "^4.0.0-rc.8",
     "@rneui/themed": "^4.0.0-rc.8",
     "@use-expo/font": "^2.0.0",
-    "expo": "^50.0.15",
+    "expo": "~50.0.19",
     "expo-asset": "~9.0.2",
     "expo-auth-session": "~5.4.0",
     "expo-camera": "~14.1.2",
     "expo-clipboard": "~5.0.1",
-    "expo-crypto": "~12.8.1",
-    "expo-dev-client": "~3.3.11",
+    "expo-dev-client": "~3.3.12",
     "expo-font": "~11.10.3",
     "expo-image-picker": "~14.7.1",
-    "expo-media-library": "~15.9.1",
     "expo-splash-screen": "~0.26.4",
-    "expo-status-bar": "~1.11.1",
-    "expo-web-browser": "~12.8.2",
     "formik": "^2.4.5",
     "galio-framework": "^0.8.0",
     "lottie-react-native": "6.5.1",
@@ -50,7 +43,7 @@
     "prop-types": "^15.7.2",
     "react": "18.2.0",
     "react-native": "0.73.6",
-    "react-native-fs": "^2.20.0",
+    "react-native-compressor": "^1.8.24",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-mime-types": "^2.5.0",
     "react-native-modal-dropdown": "1.0.2",
@@ -92,7 +85,7 @@
   "author": "Creative Tim <hello@creative-tim.com> (https://www.creative-tim.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-react-native/issues"
+    "url": "https://github.com/Azime12/geez-to-amaric-mobile-app.git"
   },
-  "homepage": "https://demos.creative-tim.com/argon-react-native"
+  "homepage": "https://github.com/Azime12/geez-to-amaric-mobile-app.git"
 }
